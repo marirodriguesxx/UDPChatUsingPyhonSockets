@@ -1,7 +1,7 @@
 import socket
 import threading
 
-HOST = ''
+HOST = '127.0.0.1'
 PORT =  20000
 
 def conectado(con, cliente):
@@ -16,16 +16,31 @@ def conectado(con, cliente):
   con.close()
   return
 
-tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+udp.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+
+# print(socket.gethostbyname(socket.gethostname()))
 
 origem = (HOST, PORT)
 
-tcp.bind(origem)
-tcp.listen(1)
+# tcp.bind(origem)
+udp.bind(origem)
+# tcp.listen(1)
+
+clientes = []
 
 while True:
-  conexao, cliente = tcp.accept()
-  t = threading.Thread(target=conectado, args=(conexao, cliente))
-  t.start()
+  print('esperando ...')
+  msg, cliente = udp.recvfrom(1024)
+  if cliente not in clientes:
+    clientes.append(cliente)
+  # print(cliente, msg.decode())
+  # udp.sendto(msg, ('255.255.255.255', 9999))
+  for cli in clientes:
+    print(cli[1])
+    udp.sendto("alou", ('<broadcast>', cli[1]))
+  # udp.sendto('ack'.encode(), cliente)
 
-tcp.close()
+udp.close()
+# tcp.close()
