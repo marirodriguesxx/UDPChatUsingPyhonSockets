@@ -1,19 +1,41 @@
 import socket
+import threading
 
-client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP) # UDP
+HOST = '127.0.0.1'
+PORT =  20000
 
-# Enable port reusage so we will be able to run multiple clients and servers on single (host, port). 
-# Do not use socket.SO_REUSEADDR except you using linux(kernel<3.9): goto https://stackoverflow.com/questions/14388706/how-do-so-reuseaddr-and-so-reuseport-differ for more information.
-# For linux hosts all sockets that want to share the same address and port combination must belong to processes that share the same effective user ID!
-# So, on linux(kernel>=3.9) you have to run multiple servers and clients under one user to share the same (host, port).
-# Thanks to @stevenreddie
-# client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+# tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+destino = (HOST, PORT)
+# tcp.connect(destino)
 
-# Enable broadcasting mode
-client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+def listenCliente():
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  while True:
+      msg = s.recvfrom(1024)
+      print("\n"+msg[0].decode())
+      if "exit" in msg[0].decode() or "bye" in msg[0].decode():
+          print('tentou sair')
 
-client.bind(("", 37020))
-while True:
-    # Thanks @seym45 for a fix
-    data, addr = client.recvfrom(1024)
-    print("received message: %s"%data)
+
+def sendMessage():
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  text = "cliente:"
+  while True:
+    if "bye" in text or "exit" in text or "finish" in text:
+        exit()
+    else:
+        text = input()
+        text = text
+        s.sendto(text.encode(), destino)
+
+
+t = threading.Thread(target=listenCliente)
+w = threading.Thread(target=sendMessage)
+t.start()
+w.start()
+print(threading.active_count())
+
+
+# udp.close()
+# tcp.close()
