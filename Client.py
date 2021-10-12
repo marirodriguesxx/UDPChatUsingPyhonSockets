@@ -38,7 +38,6 @@ def receive_File(fileName):
             f.write(cliente_file)
             cliente_file = c.recv(5000)
         f.close()
-        print("Done Receiving")
         c.close()
 
 #will run as long as the client maintains its connection.
@@ -62,19 +61,17 @@ def client_send():
             msg = input()
             c.sendto(msg.encode(), to)
             if msg == '/bye':
-                print('Fechando conexão')
-                c.close()
-                return 
+                break 
             if '/file' in msg:
                 send_file = threading.Thread(target=send_File, args=(msg.replace('/file ', ''), ),)
                 send_file.start()
             if '/get' in msg:
-                threading.Thread(target=receive_File, args=(msg.replace('/get ', ''), ),).start()
+                receive_File(msg.replace('/get ', ''), )
+                # threading.Thread(target=receive_File, args=(msg.replace('/get ', ''), ),).start()
         except:
             break
-    print('Fechando conexão')
     c.close()
-    time.sleep(5)
+    time.sleep(0)
     return 
 
 

@@ -25,7 +25,6 @@ def send_File(fileName):
         read_file = f.read(1024)
     f.close()
     tcp.shutdown(socket.SHUT_WR)
-    print("Done Sending File")
     tcp.close()
 
 def receive_File(fileName):
@@ -43,12 +42,10 @@ def receive_File(fileName):
                     f.write(cliente_file)
                     cliente_file = c.recv(5000)
                 f.close()
-                print("Done Receiving File")
                 c.close()
         except:
             tcp.close()
         
-
 def server_send(msg, sender):
     for info, user in list(users_info.items()):
         if info != sender:  #broadcast: send to everyone except the sender
@@ -78,7 +75,7 @@ def server_listen():
             #If the list of logged in users is requested, we transform the list of users so far and send it in string format only to the one who requested the list
             elif msg.decode() == '/list':
                 msg_list = (','.join(str(x) for x in usernames))
-                s.sendto(('Clientes conectados: ' + msg_list).encode('utf8'), client)
+                s.sendto(('Clientes conectados: ' + '\n' + msg_list).encode('utf8'), client)
             elif '/file' in msg.decode():
                 #notifying other customers a notice that a file has been sent
                 msg_file = users_info[client].decode() + ' enviou  ' + msg.decode().replace('/file ', '')  #variable to identify who sent the file
