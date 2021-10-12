@@ -1,10 +1,5 @@
-#########################################################Trabalho 2 - INF 452######################################################################################
+#Trabalho 2 - INF 452
 ## Autores: Mariana Rodrigues de Sant'Ana(Es98875) e Rafael Rocha(Es90668)                                                                                       ##
-##                                                                                                                                                               ##
-##                                                                                                                                                               ##
-##                                                                                                                                                               ##
-##                                                                                                                                                               ##
-###################################################################################################################################################################
 
 import socket
 import threading
@@ -27,24 +22,27 @@ def list_conected_clients(msg_list, request):
 
 
 def receiveFileTCP(fileName):
-    s = socket.socket(socket.AF_INET,
-                      socket.SOCK_STREAM)  # Create a socket object
-    s.bind((HOST, PORT))  # Bind to the port
-    f = open("[copy]" + fileName, 'wb')
-    s.listen(5)  # Now wait for client connection.
-    while True:
-        c, addr = s.accept()  # Establish connection with client.
-        print('Got connection from', addr)
-        print("Receiving...")
-        l = c.recv(1024)
-        while (l):
+    try:
+        tcp = socket.socket(socket.AF_INET,
+                            socket.SOCK_STREAM)  # Create a socket object
+        tcp.bind((HOST, PORT))  # Bind to the port
+        f = open("[copy]" + fileName, 'wb')
+        tcp.listen(5)  # Now wait for client connection.
+        while True:
+            c, addr = tcp.accept()  # Establish connection with client.
+            print('Got connection from', addr)
             print("Receiving...")
-            f.write(l)
             l = c.recv(1024)
-        f.close()
-        print("Done Receiving")
-        c.send(('Thank you for connecting').encode())
-        c.close()
+            while (l):
+                print("Receiving...")
+                f.write(l)
+                l = c.recv(1024)
+            f.close()
+            print("Done Receiving")
+            c.send(('Thank you for connecting').encode())
+            c.close()
+    except:
+        tcp.close()
 
 
 def server_listen():
