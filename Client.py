@@ -1,5 +1,5 @@
 ##Trabalho 2 - INF 452
-# Autores: Mariana Rodrigues de Sant'Ana(Es98875) e Rafael Rocha(Es90668) 
+# Autores: Mariana Rodrigues (Es98875) e Rafael Rocha(Es90668) 
 
 import socket
 import threading
@@ -59,13 +59,10 @@ def client_send():
         if msg == '/bye':
             break
         if '/file' in msg:
-            print('Enviando arquivo')
             send_file = threading.Thread(target=send_File, args=(msg.replace('/file ', ''), ),)
             send_file.start()
         if '/get' in msg:
-            print('Pegar arquivo')
-            # receive_File = threading.Thread(target=send_File, args=(msg.replace('/file ', ''), ),)
-            # receive_File.start()
+            threading.Thread(target=receive_File, args=(msg.replace('/get ', ''), ),).start()
     time.sleep(5)
     c.close()
     return

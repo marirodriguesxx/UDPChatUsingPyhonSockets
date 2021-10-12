@@ -1,5 +1,5 @@
 ##Trabalho 2 - INF 452
-# Autores: Mariana Rodrigues de Sant'Ana(Es98875) e Rafael Rocha(Es90668)                                                                                       ##
+# Autores: Mariana Rodrigues (Es98875) e Rafael Rocha(Es90668)                                                                                       ##
 
 import socket
 import threading
@@ -17,7 +17,7 @@ def list_conected_clients(msg_list, request):
 def send_File(fileName):    
     # creating a socket implementing TCP for sending files
     tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
-    tcp.connect(('', PORT))
+    tcp.connect((socket.gethostname(), PORT))
     f = open(fileName, 'rb')
     read_file = f.read(1024)
     while (read_file):
@@ -25,6 +25,7 @@ def send_File(fileName):
         read_file = f.read(1024)
     f.close()
     tcp.shutdown(socket.SHUT_WR)
+    print("Done Sending File")
     tcp.close()
 
 def receive_File(fileName):
@@ -84,13 +85,13 @@ def server_listen():
                 send_file_notification = threading.Thread(target=server_send, args= (msg_file.encode(),client))
                 send_file_notification.start()
                 #starting to receive files
-                file = threading.Thread(target=receive_File, args=(msg.decode().replace('/file ', ''), ),)
+                file = threading.Thread(target=receive_File, args=(msg.decode().replace('/file ', ''), ))
                 file.start()
             elif '/get' in msg.decode():
                 print('Pegando arquivo')
                 #starting to send the files
-                # file = threading.Thread(target=send_File, args=(msg.decode().replace('/file ', ''), ),)
-                # file.start()
+                file = threading.Thread(target=send_File, args=(msg.decode().replace('/get ', ''), ))
+                file.start()
             else:
                 msg_chat = users_info[client].decode() + ' disse: ' + msg.decode()  #variable to identify who sent the message
                 server_send(msg_chat.encode(),client)
