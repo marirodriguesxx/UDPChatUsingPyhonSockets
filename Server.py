@@ -19,7 +19,7 @@ def send_File(fileName):
     tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
     tcp.connect((socket.gethostname(), PORT))
     f = open(fileName, 'rb')
-    read_file = f.read(1024)
+    read_file = f.read(5000)
     while (read_file):
         tcp.send(read_file)
         read_file = f.read(1024)
@@ -38,10 +38,10 @@ def receive_File(fileName):
             while True:
                 #accepting client connection request
                 c, address = tcp.accept()  
-                cliente_file = c.recv(1024)
+                cliente_file = c.recv(5000)
                 while (cliente_file):
                     f.write(cliente_file)
-                    cliente_file = c.recv(1024)
+                    cliente_file = c.recv(5000)
                 f.close()
                 print("Done Receiving File")
                 c.close()
