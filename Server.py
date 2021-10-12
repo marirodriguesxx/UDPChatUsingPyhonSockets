@@ -88,7 +88,6 @@ def server_listen():
                 file = threading.Thread(target=receive_File, args=(msg.decode().replace('/file ', ''), ))
                 file.start()
             elif '/get' in msg.decode():
-                print('Pegando arquivo')
                 #starting to send the files
                 file = threading.Thread(target=send_File, args=(msg.decode().replace('/get ', ''), ))
                 file.start()

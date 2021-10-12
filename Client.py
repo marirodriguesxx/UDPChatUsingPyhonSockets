@@ -45,7 +45,7 @@ def receive_File(fileName):
 def client_listen():
     while True:
         msgs, serv = c.recvfrom(1024)
-        print(msgs)
+        print(msgs.decode('utf8'))
 
 #will be executed as long as the client does not close the connection with the command "/bye"
 def client_send():
