@@ -62,7 +62,7 @@ def server_listen():
         if client not in clients:
             user = msg.decode() + ' entrou'
             server_send(user.encode(),client)
-            usernames.append(msg)
+            usernames.append(msg.decode('utf8'))
             clients.append(client)
             users_info[client] = msg
         #if it was already connected, we just received the message and broadcasted to others on the network, including the information about who sent it.
@@ -71,17 +71,17 @@ def server_listen():
             if msg.decode() == '/bye':
                 msg_bye = users_info[client].decode() + ' saiu'
                 server_send(msg_bye.encode(),client)
-                usernames.remove(users_info[client])
+                usernames.remove(users_info[client].decode('utf8'))
                 clients.remove(client)
                 if not clients: #if there are no more "online" clients, the server is closed
                     break
             #If the list of logged in users is requested, we transform the list of users so far and send it in string format only to the one who requested the list
             elif msg.decode() == '/list':
-                msg_list = ','.join(str(x) for x in usernames)
-                s.sendto(('Clientes conectados: ' + msg_list).encode(), client)
+                msg_list = (','.join(str(x) for x in usernames))
+                s.sendto(('Clientes conectados: ' + msg_list).encode('utf8'), client)
             elif '/file' in msg.decode():
                 #notifying other customers a notice that a file has been sent
-                msg_file = users_info[client].decode() + ' enviou um arquivo: ' + msg.decode().replace('/file ', '')  #variable to identify who sent the file
+                msg_file = users_info[client].decode() + ' enviou  ' + msg.decode().replace('/file ', '')  #variable to identify who sent the file
                 send_file_notification = threading.Thread(target=server_send, args= (msg_file.encode(),client))
                 send_file_notification.start()
                 #starting to receive files
